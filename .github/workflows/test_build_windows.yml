@@ -15,9 +15,18 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Cleanup docker
-        run: docker rmi $(docker images -q -a)
-        shell: powershell
+      - name: Disk Cleanup
+        run: |
+          Get-PSDrive
+          # Cache (Docker image)
+          docker rmi $(docker images -q -a)
+          # Android SDK
+          Remove-Item -Recurse -Force $Env:ANDROID_HOME -ErrorAction Ignore
+          Remove-Item -Recurse -Force $Env:ANDROID_NDK_HOME -ErrorAction Ignore
+          # JVM
+          Remove-Item -Recurse -Force $Env:JAVA_HOME_11_X64 -ErrorAction Ignore
+          Remove-Item -Recurse -Force $Env:JAVA_HOME_8_X64 -ErrorAction Ignore
+          Get-PSDrive
 
       - uses: actions/checkout@v2
         with:
