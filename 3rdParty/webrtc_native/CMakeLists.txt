@@ -20,7 +20,7 @@ if(WIN32)
             endif()
 
             execute_process(
-                COMMAND ${CMAKE_COMMAND} -E env DEPOT_TOOLS_WIN_TOOLCHAIN=0 ${CMAKE_CURRENT_SOURCE_DIR}/../depot_tools/gclient.bat sync --with_branch_heads --with_tags
+                COMMAND ${CMAKE_COMMAND} -E env DEPOT_TOOLS_WIN_TOOLCHAIN=0 ${CMAKE_CURRENT_SOURCE_DIR}/../depot_tools/gclient.bat sync -D --force --reset --with_branch_heads
                 WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/webrtc"
                 RESULT_VARIABLE gclient_sync_webrtc_result
             )
