@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-project(webrtc-native-build NONE)
-# project(webrtc-native-build CXX)
+# project(webrtc-native-build NONE)
+project(webrtc-native-build CXX)
 
-# set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 17)
 
-# add_compile_options(
-#     -D_GLIBCXX_USE_CXX11_ABI=0
-# )
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+add_compile_options(
+    -D_GLIBCXX_USE_CXX11_ABI=0
+)
 
 # Verify build architecture
 if (CMAKE_BUILD_ARCHITECTURE MATCHES arm64)
@@ -40,7 +42,7 @@ else()
         set(CMAKE_BUILD_ARCHITECTURE amd64)
     endif()
 
-    # set(CMAKE_SYSROOT ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/build/linux/debian_bullseye_amd64-sysroot)
+    set(CMAKE_SYSROOT ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/build/linux/debian_bullseye_amd64-sysroot)
 endif()
 
 # Verify build type
@@ -127,37 +129,111 @@ elseif (UNIX)
 endif (WIN32)
 
 
-# add_executable(webrtc_demo src/video_loopback_main.cc src/video_loopback.cc)
-# include_directories(
-#     3rdParty/webrtc_native/webrtc/src
-#     3rdParty/webrtc_native/webrtc/src/third_party/abseil-cpp
-#     3rdParty/webrtc_native/webrtc/src/third_party/libyuv/include
-#     3rdParty/webrtc_native/webrtc/src/third_party/googletest/custom
-#     3rdParty/webrtc_native/webrtc/src/third_party/googletest/src/googlemock/include
-#     3rdParty/webrtc_native/webrtc/src/third_party/googletest/src/googletest/include
-#     )
+add_executable(
+    webrtc_demo 
+    # src/video_loopback_main.cc 
+    # src/video_loopback.cc
+
+    # src/peerconnection/server/main.cc
+    # src/peerconnection/server/peer_channel.cc
+    # src/peerconnection/server/data_socket.cc
+    # src/peerconnection/server/utils.cc
+
+    # src/peerconnection/client/linux/main.cc
+    # src/peerconnection/client/linux/main_wnd.cc
+    # src/peerconnection/client/conductor.cc
+    # src/peerconnection/client/defaults.cc
+    # src/peerconnection/client/defaults.cc
+    # src/peerconnection/client/peer_connection_client.cc
+
+    # # /home/kisonhe/webrtc-native-build/3rdParty/webrtc_native/webrtc/src/api/jsep.cc
+    # /home/kisonhe/webrtc-native-build/3rdParty/webrtc_native/webrtc/src/test/vcm_capturer.cc
+    # /home/kisonhe/webrtc-native-build/3rdParty/webrtc_native/webrtc/src/rtc_base/strings/json.cc
+    # # /home/kisonhe/webrtc-native-build/3rdParty/webrtc_native/webrtc/src/pc/jsep_session_description.cc
+
+    src/main.cpp
+    src/i420_creator.cpp
 
 
-#     include_directories(
-#         third_party/webrtc/linux/include
-#         third_party/webrtc/linux/include/out/Default_x64/gen
-#         buildtools/third_party/libc++
+    )
+include_directories(
+    3rdParty/webrtc_native/webrtc/src
+    3rdParty/webrtc_native/webrtc/src/third_party/abseil-cpp
+    3rdParty/webrtc_native/webrtc/src/third_party/libyuv/include
+    3rdParty/webrtc_native/webrtc/src/third_party/googletest/custom
+    3rdParty/webrtc_native/webrtc/src/third_party/googletest/src/googlemock/include
+    3rdParty/webrtc_native/webrtc/src/third_party/googletest/src/googletest/include
+    3rdParty/webrtc_native/webrtc/src/third_party/jsoncpp/source/include
+    )
 
-#         third_party/googletest/custom
-#         third_party/googletest/src/googlemock/include
-#         third_party/googletest/src/googletest/include
-# )
 
+    include_directories(
+        third_party/webrtc/linux/include
+        third_party/webrtc/linux/include/out/Default_x64/gen
+        buildtools/third_party/libc++
 
-# set_target_properties(webrtc_demo PROPERTIES LINKER_LANGUAGE CXX)
-
-# add_subdirectory(3rdParty)
-
+        third_party/googletest/custom
+        third_party/googletest/src/googlemock/include
+        third_party/googletest/src/googletest/include
+        /usr/include/glib-2.0
+)
+include(FindPkgConfig)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(glib REQUIRED IMPORTED_TARGET glib-2.0)
+pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
+# pkg_check_modules(absl REQUIRED IMPORTED_TARGET absl_base)
 # target_link_libraries(
 #     webrtc_demo 
-#     ${CMAKE_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/libwebrtc.a
-#     ${CMAKE_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/rtc_base/librtc_base.a
-#     ${CMAKE_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/rtc_base/librtc_event.a
-#     # ${CMAKE_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/video_analyzer.o
-#     # ${CMAKE_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/video_quality_test.o
+#     PkgConfig::glib 
+#     PkgConfig::GTK 
+#     PkgConfig::absl
 #     )
+# link_directories(
+#     ${absl_LIBRARY_DIRS}
+#     )
+target_link_libraries(
+    webrtc_demo
+    # ${absl_LIBRARIES}
+    ${GTK_LIBRARIES}
+    ${glib_LIBRARIES}
+    )
+    # message(FATAL_ERROR ${absl_LIBRARIES})
+    # message(FATAL_ERROR ${absl_CFLAGS_OTHER})
+
+target_include_directories(webrtc_demo PUBLIC 
+    # ${absl_INCLUDE_DIRS}
+    ${GTK_INCLUDE_DIRS}
+    ${glib_INCLUDE_DIRS}
+    )
+target_compile_options(webrtc_demo PUBLIC 
+    # ${absl_CFLAGS_OTHER}
+    ${GTK_CFLAGS_OTHER}
+    ${glib_CFLAGS_OTHER}
+    )
+
+set_target_properties(webrtc_demo PROPERTIES LINKER_LANGUAGE CXX)
+
+add_subdirectory(3rdParty)
+# add_subdirectory(3rdParty/webrtc_native/webrtc/src/third_party/abseil-cpp)
+add_subdirectory(3rdParty/webrtc_native/webrtc/src/third_party/jsoncpp/source)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -pthread -lva -lva-drm -lva-x11 -llzma")
+# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -std=c++0x -nostdinc++")
+
+# find_package(absl REQUIRED)
+target_link_libraries(
+    webrtc_demo 
+    # ${CMAKE_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/libwebrtc.a
+    # ${CMAKE_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/rtc_base/librtc_base.a
+    # ${CMAKE_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/rtc_base/librtc_event.a
+    ${webrtc_native_LIBRARY}
+    ${boringssl_LIBRARY}
+    ${libyuv_LIBRARY}
+    X11
+    dl
+    # /home/kisonhe/jsoncpp/source/build/lib/libjsoncpp.a
+    # jsoncpp
+    jsoncpp_lib
+    # /home/kisonhe/webrtc-native-build/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/api/libjingle_peerconnection_api/jsep_ice_candidate.o
+    )
