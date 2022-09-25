@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-project(webrtc-native-build NONE)
+project(webrtc-native-build CXX)
 
 
 # Verify build architecture
@@ -121,4 +121,33 @@ elseif (UNIX)
 endif (WIN32)
 
 
+add_executable(webrtc_demo src/video_loopback_main.cc src/video_loopback.cc)
+include_directories(
+    3rdParty/webrtc_native/webrtc/src
+    3rdParty/webrtc_native/webrtc/src/third_party/abseil-cpp
+    3rdParty/webrtc_native/webrtc/src/third_party/libyuv/include
+    3rdParty/webrtc_native/webrtc/src/third_party/googletest/custom
+    3rdParty/webrtc_native/webrtc/src/third_party/googletest/src/googlemock/include
+    3rdParty/webrtc_native/webrtc/src/third_party/googletest/src/googletest/include
+    )
+
+
+#     include_directories(
+#         third_party/webrtc/linux/include
+#         third_party/webrtc/linux/include/out/Default_x64/gen
+#         buildtools/third_party/libc++
+
+#         third_party/googletest/custom
+#         third_party/googletest/src/googlemock/include
+#         third_party/googletest/src/googletest/include
+# )
+
+
+set_target_properties(webrtc_demo PROPERTIES LINKER_LANGUAGE CXX)
+
 add_subdirectory(3rdParty)
+
+target_link_libraries(
+    webrtc_demo 
+    ${CMAKE_SOURCE_DIR}/3rdParty/webrtc_native/webrtc/src/out/Debug/obj/libwebrtc.a
+    )
